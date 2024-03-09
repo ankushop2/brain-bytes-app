@@ -1,3 +1,21 @@
 body {
     font-family: "Open Sans", sans-serif;
 }
+/* Add loading spinner animation */
+/* Add loading spinner animation */
+@keyframes spinner {
+    to {
+        transform: rotate(360deg);
+    }
+}
+.loader {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spinner 1s linear infinite;
+}
+.hidden {
+    display: none;
+}

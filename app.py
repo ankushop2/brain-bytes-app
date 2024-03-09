@@ -124,7 +124,7 @@ async def generate_video():
     # Video Sitching + Generation
     
     # Upload to VIMEO
-    return 'Hello, World!'
+    return { url: "http://example.com"}
 
 
 @app.route("/audio", methods=["POST"])
@@ -141,7 +141,7 @@ def generate_audio():
     
     # Text to speech
     
-    return 'Hello World!'
+    return { "url": "http://example.com"}
 
 @app.route("/summary", methods=["POST"])
 def generate_summary():
@@ -174,4 +174,4 @@ def quiz_generation():
 
 
 # comment before deploying
-# app.run()
+# app.run(debug=True)
