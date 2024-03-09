@@ -14,6 +14,7 @@ import anthropic
 import claude_api
 import asyncio
 import json
+import requests
 
 stability_url = "https://api.stability.ai/v1/generation/stable-diffusion-v1-6/text-to-image"
 
@@ -104,8 +105,9 @@ async def generate_video():
     
     # Generate Script
     script = await generate_script(summary, anthropic_client)
+    print(script)
     
-    tts = gTTS(text=script, lang='en')
+    tts = gTTS(text=summary, lang='en')
     tts.save("audio.mp3")
 
     # Generate Image Prompts
@@ -198,7 +200,31 @@ async def generate_summary():
     else:
         summary = await generate_summary_from_blog(id_or_url, anthropic_client)
 
-    return jsonify({"type":"summary","content":summary})
+
+    translate_api_url = "https://655.mtis.workers.dev/translate"
+    translate_params_fr = {
+    'text': summary,  # The text you want to translate
+    'source_lang': 'en',    # Optional: The source language (defaults to English)
+    'target_lang': 'fr'     # Optional: The target language (defaults to French)
+    }
+
+    translate_params_it = {
+    'text': summary,  # The text you want to translate
+    'source_lang': 'en',    # Optional: The source language (defaults to English)
+    'target_lang': 'it'     # Optional: The target language (defaults to French)
+    }
+
+    response_fr = requests.get(translate_api_url, params=translate_params_fr) 
+    if response_fr.status_code == 200:
+        data = response_fr.json()
+        summary_fr = data['response']['translated_text']
+
+    response_it = requests.get(translate_api_url, params=translate_params_it) 
+    if response_it.status_code == 200:
+        data = response_it.json()
+        summary_it = data['response']['translated_text']
+
+    return jsonify({"type":"summary","content":{"summary_en":summary,"summary_fr":summary_fr,"summary_it":summary_it}})
 
 
 
