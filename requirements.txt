@@ -1,2 +1,5 @@
 Flask
 Gunicorn
+anthropic
+chardet
+youtube_transcript_api
