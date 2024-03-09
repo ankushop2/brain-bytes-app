@@ -6,22 +6,16 @@ function toggleTheme() {
     html.classList.toggle("dark");
 }
 
-
-const loader = document.querySelector('#loader');
+const loader = document.querySelector("#loader");
 
 function showLoader() {
-  loader.classList.remove('hidden');
+    loader.classList.remove("hidden");
 }
 
 function hideLoader() {
-  loader.classList.add('hidden');
+    loader.classList.add("hidden");
 }
 
-// Call showLoader() before making the API call
-// Call hideLoader() after receiving the response
-
-// Example usage:
-showLoader();
 
 // Function to make API call
 function makeAPICall(apiUrl, data) {
@@ -42,17 +36,31 @@ function makeAPICall(apiUrl, data) {
         })
         .then((data) => {
             // Handle the API response data here
+            const { type, content } = data;
             hideLoader();
-            const outputArea = document.getElementById('output-area');
-            outputArea.innerHTML += JSON.stringify(data);
+            const outputArea = document.getElementById("output-area");
         })
         .catch((error) => {
             // Handle errors here
             console.error("There was a problem with the API request:", error);
-            
-        }).finally(() => {
-            
-        });
+            switch (type) {
+                case "summary":
+                    outputArea.innerHTML = `<h3 class="text-xl font-bold mb-2">Summary:</h3><p>${content}</p>`;
+                    break;
+                case "video":
+                    outputArea.innerHTML = `<h3 class="text-xl font-bold mb-2">Video:</h3><video src="${content}" controls></video>`;
+                    break;
+                case "audio":
+                    outputArea.innerHTML = `<h3 class="text-xl font-bold mb-2">Audio:</h3><audio src="${content}" controls></audio>`;
+                    break;
+                case "quiz":
+                    outputArea.innerHTML = `<h3 class="text-xl font-bold mb-2">Quiz:</h3>${content}`;
+                    break;
+                default:
+                    outputArea.innerHTML = `<p>Unsupported response type: ${type}</p>`;
+            }
+        })
+        .finally(() => {});
 }
 
 // Function to handle button click
@@ -65,7 +73,6 @@ function handleButtonClick(buttonId, endpoint) {
         makeAPICall(apiUrl, requestData);
     });
 }
-
 
 // Attaching event listeners to buttons
 handleButtonClick("summary-btn", "/summary");

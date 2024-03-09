@@ -125,7 +125,7 @@ async def generate_video():
     # Video Sitching + Generation
     generate_video_from_imgs(results, "audio.mp3")
     # Upload to VIMEO
-    return { url: "http://example.com"}
+    return { "type": "video", "content": "http://example.com"}
 
 
 @app.route("/audio", methods=["POST"])
