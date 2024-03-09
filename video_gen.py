@@ -1,33 +1,33 @@
 from moviepy.editor import *
 import base64
 from io import BytesIO
+from PIL import Image
+import numpy as np
 
-# List of base64 encoded images
+def transcribe_audio(audio_clip):
+    recognizer = sr.Recognizer()
+    audio_data = audio_clip.to_soundarray(fps=44100)
+    audio_text = recognizer.recognize_google(audio_data)
+    return audio_text
 
-base64_images = [
-    "YOUR_BASE64_IMAGE_1",
-    "YOUR_BASE64_IMAGE_2",
-    "YOUR_BASE64_IMAGE_3",
-    "YOUR_BASE64_IMAGE_4",
-    "YOUR_BASE64_IMAGE_5",
-    "YOUR_BASE64_IMAGE_6"
-]
+def generate_video_from_imgs(img_jsons, audio_file_path):
+    audio = AudioFileClip(audio_file_path)
+    audio_duration = audio.duration
+    image_section_duration = audio_duration / 6
+    #Extract base64 strings from JSON
+    img_clips = []
+    for img_json in img_jsons:
+        img = Image.open(BytesIO(base64.b64decode(img_json['artifacts'][0]['base64'])))
+        img_clip = ImageClip(np.array(img), duration=5)
+        img_duration = min(image_section_duration, audio_duration)
+        img_clips.append(img_clip.set_duration(image_section_duration))
+        audio_duration -= img_duration
 
-# Decode base64 images and store as clips
-clips = []
-for base64_img in base64_images:
-    img_data = base64.b64decode(base64_img)
-    img = ImageClip(BytesIO(img_data))
-    clips.append(img.set_duration(15))  # Each image for 15 seconds
+    final_clip = concatenate_videoclips(img_clips, method="compose")
+    final_clip = final_clip.set_audio(audio)
 
-# Combine clips into a video
-final_clip = concatenate_videoclips(clips, method="compose")
 
-# Add audio
-audio_base64 = "YOUR_BASE64_AUDIO_FILE"
-audio_data = base64.b64decode(audio_base64)
-audio = AudioFileClip(BytesIO(audio_data))
-final_clip = final_clip.set_audio(audio)
+    final_clip.write_videofile("output_video.mp4", fps=24)
 
-# Export final video
-final_clip.write_videofile("output_video.mp4", fps=24)  # Adjust fps as needed
+    return
+

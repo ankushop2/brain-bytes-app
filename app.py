@@ -4,6 +4,8 @@ from flask import render_template, jsonify, send_from_directory, send_file
 from claude_api import  generate_summary_from_blog, generate_image_prompts, generate_script
 from claude_api import extract_transcript
 from utils import determine_url_type_and_extract_id
+from gtts import gTTS
+from video_gen import generate_video_from_imgs
 import os
 import base64
 import requests
@@ -67,7 +69,7 @@ async def generate_text_to_image(text_prompt):
     }
     
     response = requests.request("POST", stability_url, json=body, headers=headers)
-    return response.json
+    return response.json()
 
 
 @app.route('/video', methods=["POST"])
@@ -97,6 +99,10 @@ async def generate_video():
     else:
         summary = await generate_summary_from_blog(id_or_url, anthropic_client)
     
+    #Generate audio 
+        
+    tts = gTTS(text=summary, lang='en')
+    tts.save("audio.mp3")
     # Generate Script
     script = await generate_script(summary, anthropic_client)
     
@@ -117,14 +123,9 @@ async def generate_video():
     # Printing the results
     for result in results:
         print(result)
-
-    
-    # Text to speech
-    
-    # Generate Captions
     
     # Video Sitching + Generation
-    
+    generate_video_from_imgs(results, "audio.mp3")
     # Upload to VIMEO
     return { url: "http://example.com"}
 
