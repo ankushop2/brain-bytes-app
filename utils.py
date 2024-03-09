@@ -9,7 +9,7 @@ def determine_url_type_and_extract_id(url):
     )
     
     # Medium URL regex
-    medium_regex = r'https:\/\/*medium\.com\/*'
+    medium_regex = r'.*'
     medium_match = re.match(medium_regex, url)
     # Check if it's a YouTube URL
     youtube_match = re.match(youtube_regex, url)

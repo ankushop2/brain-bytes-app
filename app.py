@@ -1,7 +1,7 @@
 from flask import Flask
 from flask import request
 from flask import render_template, jsonify, send_from_directory, send_file
-from claude_api import  generate_summary_from_blog, generate_image_prompts, generate_script, generate_mcq
+from claude_api import  generate_summary_from_blog, generate_image_prompts, generate_script, generate_mcq, generate_flash_cards
 from captions import create_captions
 from claude_api import extract_transcript
 from utils import determine_url_type_and_extract_id
@@ -110,6 +110,8 @@ async def generate_video():
 
     # Generate Image Prompts
     image_prompts = await generate_image_prompts(script, anthropic_client)
+
+    print(image_prompts)
     
     prompts = convert_to_array(image_prompts)
     
@@ -239,6 +241,45 @@ async def quiz_generation():
     print(mcq_string)
     return jsonify({"type":"quiz-generation","content":'{'+mcq_string+'}'})
     # return {"type":"quiz-generation", "content":mcq_string}
+
+@app.route('/flash-cards', methods=["POST"])
+async def flash_cards():
+    # Parse JSON from UI
+    data = request.get_json()
+    url = data.get('URL')
+    
+    # Determine the Type of URL 
+
+    type, id_or_url = determine_url_type_and_extract_id(url)
+    if type == "YouTube":
+        print("YouTube Video ID:", id_or_url)
+    elif type == "Medium":
+        print("Medium URL:", id_or_url)
+
+    #Generate Transcript / Text
+    if type=='YouTube':
+        text = await  extract_transcript(id_or_url)
+    
+    # Generate Transcript / Text 
+    anthropic_client = anthropic.Anthropic(
+    api_key=os.environ.get("ANTHROPIC_API_KEY"))
+
+    if type=='YouTube':
+        summary = await claude_api.generate_summary(text,anthropic_client)
+    else:
+        summary = await generate_summary_from_blog(id_or_url, anthropic_client)
+
+
+    # Summarize using LLM and generate questions
+        
+    mcq_string = await generate_flash_cards(summary, anthropic_client)
+    # print(mcq_string)
+    # start = mcq_string.find("```json") + len("```json")
+    # end = mcq_string.find("```", start)
+    # mcq_string = mcq_string[start:end]
+    # questions = json.loads(mcq_string)
+    print(mcq_string)
+    return jsonify({"type":"flash-cards","content":'{'+mcq_string+'}'})
 
 # comment before deploying
 app.run(debug=True, port=5001)

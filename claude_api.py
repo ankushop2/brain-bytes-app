@@ -31,34 +31,40 @@ def claude_api_call(message,client):
 
 async def generate_summary(transcript, client):
 
-    message = f"I want you to summarise this transcipt to a 10min read, do not \
+    message = f"I want you to summarise this transcipt to a 5min read, do not \
         include any filler messages like 'Here is the summary', the transcript is  - {transcript} \n\n Do not include the prelude"
     
     return claude_api_call(message, client)
 
 
 async def generate_summary_from_blog(blog_url, client):
-    message = f"I want you to summarise this blog to a 10min read, do not \
+    message = f"I want you to summarise this blog to a 5min read, do not \
         include any filler messages like 'Here is the summary', the blog is  - {blog_url} \n\n Do not include the prelude"
     
     return claude_api_call(message, client)
 
 async def generate_script(summary, client):
     message = f"You are a social media manager convert the following summary into a script for \
-        a 1minute strictly engaging tiktok reel, do not inlcude text like 'Here is a script'. Also do not include any actions the actor takes, \
+        a 30s-50s engaging tiktok reel, do not inlcude text like 'Here is a script'. Also do not include any actions the actor takes, \
             only keep speech. \n\n Here is the summary  - {summary} "
     
     return claude_api_call(message, client)
 
 async def generate_image_prompts(script, client):
     message = f"I want to feed this into a text-to-image generator to create a video based on keypoints \
-        from the following script, I need 6 phrases to feed into the engine sequenced with timestamps, you should form a narrative of an interesting \
-            tiktok video. The video is 1 min long. Do not include the prelude. The script is - {script} \n\n "
+        from the following script, I need 10 phrases to feed into the engine sequenced with timestamps, you should form a narrative of an interesting \
+            tiktok video. The video is 30-50s long. Do not include the prelude. The script is - {script} \n\n "
 
     return claude_api_call(message, client)
 
 async def generate_mcq(summary, client):
     message = f"I want to create 2 multiple choice question based on the following summary, the summary is - {summary} \n\n Format the output is this form 'Question 1:' 'Option 1' 'Option 2' 'Option 3' 'Option 4' 'Answer' \n\n Return this as a json object"
+
+    return claude_api_call(message, client)
+
+
+async def generate_flash_cards(summary, client):
+    message = f"I want to create 5 flash cards based on the following summary. Format the output in this format 'Question1:' 'Answer1:', Return this as a json object, the summary is - {summary} \n\n "
 
     return claude_api_call(message, client)
 
