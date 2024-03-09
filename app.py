@@ -12,8 +12,6 @@ import requests
 import anthropic
 import claude_api
 import asyncio
-import io
-from gtts import gTTS
 
 stability_url = "https://api.stability.ai/v1/generation/stable-diffusion-v1-6/text-to-image"
 
