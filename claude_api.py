@@ -44,14 +44,16 @@ async def generate_summary_from_blog(blog_url, client):
     return claude_api_call(message, client)
 
 async def generate_script(summary, client):
-    message = f"Convert the summary into a script for \
-        a 1-2min video, do not inlcude text like 'Here is a script', summary  - {summary} \n\n Do not include the prelude"
+    message = f"You are a social media manager convert the following summary into a script for \
+        a 1minute strictly engaging tiktok reel, do not inlcude text like 'Here is a script'. Also do not include any actions the actor takes, \
+            only keep speech. \n\n Here is the summary  - {summary} "
     
     return claude_api_call(message, client)
 
 async def generate_image_prompts(script, client):
-    message = f"I want to feed this into a visual image generator to create a video based on keypoints \
-        from the following script, I need 6 phrases not exceeding 5 words sequenced with timestamps, you should form a narrative. The video is 1 to 2 min long. The script is - {script} \n\n Do not include the prelude"
+    message = f"I want to feed this into a text-to-image generator to create a video based on keypoints \
+        from the following script, I need 6 phrases to feed into the engine sequenced with timestamps, you should form a narrative of an interesting \
+            tiktok video. The video is 1 min long. Do not include the prelude. The script is - {script} \n\n "
 
     return claude_api_call(message, client)
 

@@ -13,7 +13,7 @@ def transcribe_audio(audio_clip):
 def generate_video_from_imgs(img_jsons, audio_file_path):
     audio = AudioFileClip(audio_file_path)
     audio_duration = audio.duration
-    image_section_duration = audio_duration / 6
+    image_section_duration = audio_duration / len(img_jsons)
     #Extract base64 strings from JSON
     img_clips = []
     for img_json in img_jsons:
