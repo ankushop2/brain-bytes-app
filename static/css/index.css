@@ -1,5 +1,6 @@
 body {
-    font-family: "Open Sans", sans-serif;
+    font-family: myFont;
+    src: url(ChrustyRock-ORLA.ttf);
 }
 @keyframes spin {
     to {

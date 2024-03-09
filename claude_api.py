@@ -64,7 +64,7 @@ async def generate_mcq(summary, client):
 
 
 async def generate_flash_cards(summary, client):
-    message = f"I want to create 5 flash cards based on the following summary. Format the output in this format 'Question1:' 'Answer1:', Return this as a json object, the summary is - {summary} \n\n "
+    message = f"I want to create 4 flash cards based on the following summary. Format the output in this format 'Question1:' 'Answer1:', Return this as a json object, the summary is - {summary} \n\n "
 
     return claude_api_call(message, client)
 
