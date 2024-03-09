@@ -1,5 +1,6 @@
 Flask
 Gunicorn
-anthropic
+anthropic==0.19.1
 chardet
 youtube_transcript_api
+flask[async]

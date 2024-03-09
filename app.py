@@ -1,16 +1,37 @@
 from flask import Flask
 from flask import request
+from claude_api import  generate_summary_from_blog, generate_image_prompts, generate_script
+from claude_api import extract_transcript
+from utils import determine_url_type_and_extract_id
 import os
 import base64
 import requests
+import anthropic
+import claude_api
+import asyncio
 
 stability_url = "https://api.stability.ai/v1/generation/stable-diffusion-v1-6/text-to-image"
 
-from claude_api import genertate_summary, generate_summary_from_blog, generate_image_prompts, generate_script
-from claude_api import extract_transcript
 app = Flask(__name__)
 
-def generate_text_to_image(text_prompt):
+def convert_to_array(text):
+    # Splitting the text into lines
+    lines = text.split("\n")
+
+    # Removing the first line as it's not part of the timestamped phrases
+    lines = lines[1:]
+
+    # Creating an array of dictionaries with timestamp and phrase fields
+    prompts = []
+    for line in lines:
+        if " - " in line:
+            timestamp, phrase = line.split(" - ", 1)
+            prompts.append({"timestamp": timestamp, "phrase": phrase})
+        else:
+            print(f"Ignoring line: {line}")
+    return prompts
+
+async def generate_text_to_image(text_prompt):
     headers = {
         "Accept": "application/json",
         "Content-Type": "application/json",
@@ -41,31 +62,49 @@ async def generate_video():
     # Parse JSON from UI
     data = request.get_json()
     url = data.get('URL')
-    print(url)
-    type = 'video' #Placeholder for input type
     
     # Determine the Type of URL
     
+    type, id_or_url = determine_url_type_and_extract_id(url)
+    if type == "YouTube":
+        print("YouTube Video ID:", id_or_url)
+    elif type == "Medium":
+        print("Medium URL:", id_or_url)
     
     # Generate Transcript / Text 
-    if type=='video':
-        text = extract_transcript(url)
-    # Summarize using LLM
+    if type=='YouTube':
+        text = await  extract_transcript(id_or_url)
 
-    if type=='video':
-        summary = await genertate_summary(text)
+    # Summarize using LLM
+    anthropic_client = anthropic.Anthropic(
+    api_key=os.environ.get("ANTHROPIC_API_KEY"))
+    
+    if type=='YouTube':
+        summary = await claude_api.generate_summary(text,anthropic_client)
     else:
-        summary = await generate_summary_from_blog(url)
+        summary = await generate_summary_from_blog(id_or_url, anthropic_client)
     
     # Generate Script
-    script = await generate_script(summary)
+    script = await generate_script(summary, anthropic_client)
+    
 
     # Generate Image Prompts
-    image_prompts = await generate_image_prompts(script)
+    image_prompts = await generate_image_prompts(script, anthropic_client)
+    
+    prompts = convert_to_array(image_prompts)
+    
+    # List to hold tasks
+    results = []
+    
+    # Text to image
+    for prompt in prompts:
+        result = await generate_text_to_image(prompt['phrase'])
+        results.append(result)
+    
+    # Printing the results
+    for result in results:
+        print(result)
 
-    # Text to Image 
-
-    print(generate_text_to_image('A lighthouse on a cliff'))
     
     # Text to speech
     
@@ -124,3 +163,4 @@ def quiz_generation():
 
 
 # comment before deploying
+app.run()

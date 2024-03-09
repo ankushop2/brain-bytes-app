@@ -1,5 +1,6 @@
 import anthropic
 from youtube_transcript_api import YouTubeTranscriptApi
+import os
 
 async def extract_transcript(yt_video_id):
     try:
@@ -28,7 +29,7 @@ def claude_api_call(message,client):
         print(f"Error: {e}")
         return None
 
-async def genertate_summary(transcript, client):
+async def generate_summary(transcript, client):
 
     message = f"I want you to summarise this transcipt to a 10min read, do not \
         include any filler messages like 'Here is the summary', the transcript is  - {transcript} \n\n Do not include the prelude"
@@ -59,13 +60,13 @@ if __name__ == "__main__":
     
     yt_video_id = "deQ7ltRsCzw"
     client = anthropic.Anthropic(
-    api_key="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")
+    api_key=os.environ.get("ANTHROPIC_API_KEY"))
     transcript = extract_transcript(yt_video_id)
     if transcript is None:
         print("Error: Could not extract transcript")
         exit(1)
     print("Generating Summary")
-    summary = genertate_summary(transcript, client)
+    summary = generate_summary(transcript, client)
     # summary = generate_summary_from_blog("https://medium.com/analytics-vidhya/semantic-search-engine-using-nlp-cec19e8cfa7e", client)
     print("Generating Script")
     script = generate_script(summary, client)
