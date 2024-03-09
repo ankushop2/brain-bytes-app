@@ -18,7 +18,7 @@ async def extract_transcript(yt_video_id):
 def claude_api_call(message,client):
     try:
         message = client.messages.create(
-                model="claude-instant-1.2",
+                model="claude-3-sonnet-20240229",
                 max_tokens=4000,
                 messages=[
                 {"role": "user", "content": f"{message}"}

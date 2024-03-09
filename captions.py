@@ -4,11 +4,8 @@ import ffmpeg
 
 from faster_whisper import WhisperModel
 
-input_video = "output_video.mp4"
-input_video_name = input_video.replace(".mp4", "")
 
-
-def extract_audio():
+def extract_audio(input_video_name, input_video):
     extracted_audio = f"audio-{input_video_name}.wav"
     stream = ffmpeg.input(input_video)
     stream = ffmpeg.output(stream, extracted_audio)
@@ -57,7 +54,7 @@ def generate_subtitle_file(language, segments):
 
     return subtitle_file
 
-def add_subtitle_to_video(soft_subtitle, subtitle_file,  subtitle_language):
+def add_subtitle_to_video(soft_subtitle, subtitle_file,  subtitle_language, input_video, input_video_name):
 
     video_input_stream = ffmpeg.input(input_video)
     subtitle_input_stream = ffmpeg.input(subtitle_file)
@@ -94,5 +91,27 @@ def run():
         subtitle_language=language
     )
 
-run()
+# run()
+
+def create_captions(video_path):
+
+    input_video = video_path
+    input_video_name = input_video.replace(".mp4", "")
+
+    extracted_audio = extract_audio(input_video_name, input_video)
+    language, segments = transcribe(audio=extracted_audio)
+    subtitle_file = generate_subtitle_file(
+        language=language,
+        segments=segments
+    )
+
+    add_subtitle_to_video(
+        soft_subtitle=False,
+        subtitle_file=subtitle_file,
+        subtitle_language=language,
+        input_video=input_video,
+        input_video_name=input_video_name
+    )
+
+    return
 
