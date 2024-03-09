@@ -1,7 +1,7 @@
 from flask import Flask
 from flask import request
 from flask import render_template, jsonify, send_from_directory, send_file
-from claude_api import  generate_summary_from_blog, generate_image_prompts, generate_script
+from claude_api import  generate_summary_from_blog, generate_image_prompts, generate_script, generate_mcq
 from claude_api import extract_transcript
 from utils import determine_url_type_and_extract_id
 from gtts import gTTS
@@ -12,6 +12,7 @@ import requests
 import anthropic
 import claude_api
 import asyncio
+import json
 
 stability_url = "https://api.stability.ai/v1/generation/stable-diffusion-v1-6/text-to-image"
 
@@ -75,24 +76,24 @@ async def generate_video():
     # Parse JSON from UI
     data = request.get_json()
     url = data.get('URL')
+    print(url)
     
     # Determine the Type of URL
     
-    type, id_or_url = determine_url_type_and_extract_id(url)
-    if type == "YouTube":
+    url_type, id_or_url = determine_url_type_and_extract_id(url)
+    if url_type == "YouTube":
         print("YouTube Video ID:", id_or_url)
-    elif type == "Medium":
+    elif url_type == "Medium":
         print("Medium URL:", id_or_url)
-    
     # Generate Transcript / Text 
-    if type=='YouTube':
+    if url_type=='YouTube':
         text = await  extract_transcript(id_or_url)
 
     # Summarize using LLM
     anthropic_client = anthropic.Anthropic(
     api_key=os.environ.get("ANTHROPIC_API_KEY"))
     
-    if type=='YouTube':
+    if url_type=='YouTube':
         summary = await claude_api.generate_summary(text,anthropic_client)
     else:
         summary = await generate_summary_from_blog(id_or_url, anthropic_client)
@@ -195,18 +196,43 @@ async def generate_summary():
 
 
 @app.route('/quiz-generation', methods=["POST"])
-def quiz_generation():
+async def quiz_generation():
     # Parse JSON from UI
     data = request.get_json()
     url = data.get('URL')
     
     # Determine the Type of URL 
+
+    type, id_or_url = determine_url_type_and_extract_id(url)
+    if type == "YouTube":
+        print("YouTube Video ID:", id_or_url)
+    elif type == "Medium":
+        print("Medium URL:", id_or_url)
+
+#Generate Transcript / Text
+    if type=='YouTube':
+        text = await  extract_transcript(id_or_url)
     
     # Generate Transcript / Text 
-    
-    # Summarize using LLM and generate questions
-    return 'Hello World!'
+    anthropic_client = anthropic.Anthropic(
+    api_key=os.environ.get("ANTHROPIC_API_KEY"))
 
+    if type=='YouTube':
+        summary = await claude_api.generate_summary(text,anthropic_client)
+    else:
+        summary = await generate_summary_from_blog(id_or_url, anthropic_client)
+
+
+    # Summarize using LLM and generate questions
+        
+    mcq_string = await generate_mcq(summary, anthropic_client)
+    start = mcq_string.find("```json") + len("```json")
+    end = mcq_string.find("```", start)
+    mcq_string = mcq_string[start:end]
+    questions = json.loads(mcq_string)
+
+    # return jsonify({"type":"mcq","content":mcq})
+    return questions
 
 # comment before deploying
-# app.run(debug=True)
+app.run(debug=True, port=5001)

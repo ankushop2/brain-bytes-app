@@ -55,6 +55,10 @@ async def generate_image_prompts(script, client):
 
     return claude_api_call(message, client)
 
+async def generate_mcq(summary, client):
+    message = f"I want to create 2 multiple choice question based on the following summary, the summary is - {summary} \n\n Format the output is this form 'Question 1:' 'Option 1' 'Option 2' 'Option 3' 'Option 4' 'Answer' \n\n Return this as a json object"
+
+    return claude_api_call(message, client)
 
 if __name__ == "__main__":
     
