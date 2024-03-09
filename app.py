@@ -209,4 +209,4 @@ def quiz_generation():
 
 
 # comment before deploying
-app.run(debug=True)
+# app.run(debug=True)
