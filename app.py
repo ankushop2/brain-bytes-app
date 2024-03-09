@@ -209,7 +209,7 @@ async def quiz_generation():
     elif type == "Medium":
         print("Medium URL:", id_or_url)
 
-#Generate Transcript / Text
+    #Generate Transcript / Text
     if type=='YouTube':
         text = await  extract_transcript(id_or_url)
     
@@ -232,7 +232,7 @@ async def quiz_generation():
     questions = json.loads(mcq_string)
 
     # return jsonify({"type":"mcq","content":mcq})
-    return questions
+    return {"type":"quiz-generation", "content":questions}
 
 # comment before deploying
-app.run(debug=True, port=5001)
+app.run(debug=True)

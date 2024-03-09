@@ -1,3 +1,5 @@
+const loader = document.getElementById("loader");
+loader.hidden = true;
 tailwind.config = {
     darkMode: "class",
 };
@@ -6,14 +8,14 @@ function toggleTheme() {
     html.classList.toggle("dark");
 }
 
-const loader = document.querySelector("#loader");
-
 function showLoader() {
-    loader.classList.remove("hidden");
+    const loader = document.getElementById("loader");
+    loader.hidden = false;
 }
 
 function hideLoader() {
-    loader.classList.add("hidden");
+    const loader = document.getElementById("loader");
+    loader.hidden = true;
 }
 
 // Function to make API call
@@ -39,11 +41,10 @@ function makeAPICall(apiUrl, data) {
             ) {
                 return { type: "video", data: response.blob() };
             } else {
-                return { type: "summary", data: response.json() };
+                return { type: "quiz-generation", data: response.json() };
             }
         })
         .then(({ type, data }) => {
-            hideLoader();
             // Handle the API response data here
             if (type == "audio" || type == "video") {
                 data.then((blob) => {
@@ -58,16 +59,62 @@ function makeAPICall(apiUrl, data) {
                     mediaContainer.appendChild(mediaElement);
                 });
             } else {
-                
                 const outputArea = document.getElementById("output-area");
                 data.then((data) => {
-
+                    
                     switch (type) {
-                        case "summary":
-                            outputArea.innerHTML = `<h3 class="text-xl font-bold mb-2">Summary:</h3><p>${data.content}</p>`;
-                            break;
-                        case "quiz":
-                            outputArea.innerHTML = `<h3 class="text-xl font-bold mb-2">Quiz:</h3>${data.content}`;
+                        case "quiz-generation":
+                            const quizContainer = document.createElement("div");
+                            quizContainer.classList.add(
+                                "flex",
+                                "flex-col",
+                                "gap-4"
+                            );
+
+                            data.content.forEach(
+                                (questionData, index) => {
+                                    const questionCard =
+                                        document.createElement("div");
+                                    questionCard.classList.add(
+                                        "p-4",
+                                        "bg-gray-100",
+                                        "rounded",
+                                        "shadow"
+                                    );
+
+                                    const questionNumber =
+                                        document.createElement("h2");
+                                    questionNumber.classList.add(
+                                        "text-lg",
+                                        "font-bold",
+                                        "mb-2"
+                                    );
+                                    questionNumber.textContent =
+                                        questionData.question;
+
+                                    const optionsList =
+                                        document.createElement("ul");
+                                    optionsList.classList.add(
+                                        "list-disc",
+                                        "ml-6"
+                                    );
+
+                                    for (let i = 1; i <= 4; i++) {
+                                        const optionKey = 'option' + i;
+                                        if (questionData.hasOwnProperty(optionKey)) {
+                                            const optionItem = document.createElement('li');
+                                            optionItem.textContent = questionData[optionKey];
+                                            optionsList.appendChild(optionItem);
+                                        }
+                                    }
+
+                                    questionCard.appendChild(questionNumber);
+                                    questionCard.appendChild(optionsList);
+                                    quizContainer.appendChild(questionCard);
+                                }
+                            );
+
+                            outputArea.appendChild(quizContainer);
                             break;
                         default:
                             outputArea.innerHTML = `<p>Unsupported response type: ${type}</p>`;
@@ -79,7 +126,9 @@ function makeAPICall(apiUrl, data) {
             // Handle errors here
             console.error("There was a problem with the API request:", error);
         })
-        .finally(() => {});
+        .finally(() => {
+            hideLoader();
+        });
 }
 
 // Function to handle button click
@@ -94,7 +143,7 @@ function handleButtonClick(buttonId, endpoint) {
 }
 
 // Attaching event listeners to buttons
-handleButtonClick("summary-btn", "/summary");
+// handleButtonClick("summary-btn", "/summary");
 handleButtonClick("video-btn", "/video");
-handleButtonClick("audio-btn", "/audio");
-handleButtonClick("quiz-btn", "/quiz");
+//handleButtonClick("audio-btn", "/audio");
+handleButtonClick("quiz-btn", "/quiz-generation");
