@@ -36,7 +36,7 @@ def format_time(seconds):
 
     return formatted_time
 
-def generate_subtitle_file(language, segments):
+def generate_subtitle_file(language, segments, input_video_name):
 
     subtitle_file = f"sub-{input_video_name}.{language}.srt"
     text = ""
@@ -82,7 +82,7 @@ def run():
     language, segments = transcribe(audio=extracted_audio)
     subtitle_file = generate_subtitle_file(
     language=language,
-    segments=segments
+    segments=segments,
     )
 
     add_subtitle_to_video(
@@ -102,7 +102,8 @@ def create_captions(video_path):
     language, segments = transcribe(audio=extracted_audio)
     subtitle_file = generate_subtitle_file(
         language=language,
-        segments=segments
+        segments=segments,
+        input_video_name=input_video_name
     )
 
     add_subtitle_to_video(
