@@ -39,10 +39,6 @@ function makeAPICall(apiUrl, data) {
             const { type, content } = data;
             hideLoader();
             const outputArea = document.getElementById("output-area");
-        })
-        .catch((error) => {
-            // Handle errors here
-            console.error("There was a problem with the API request:", error);
             switch (type) {
                 case "summary":
                     outputArea.innerHTML = `<h3 class="text-xl font-bold mb-2">Summary:</h3><p>${content}</p>`;
@@ -59,6 +55,10 @@ function makeAPICall(apiUrl, data) {
                 default:
                     outputArea.innerHTML = `<p>Unsupported response type: ${type}</p>`;
             }
+        })
+        .catch((error) => {
+            // Handle errors here
+            console.error("There was a problem with the API request:", error);
         })
         .finally(() => {});
 }

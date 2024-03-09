@@ -190,7 +190,7 @@ async def generate_summary():
     else:
         summary = await generate_summary_from_blog(id_or_url, anthropic_client)
 
-    return jsonify({"Summary":summary})
+    return jsonify({"type":"summary","content":summary})
 
 
 
@@ -209,4 +209,4 @@ def quiz_generation():
 
 
 # comment before deploying
-app.run(debug=True)
+# app.run(debug=True)

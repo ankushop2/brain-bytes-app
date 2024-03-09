@@ -5,3 +5,4 @@ chardet
 youtube_transcript_api
 flask[async]
 gtts
+moviepy
