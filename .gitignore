@@ -102,3 +102,9 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+*.wav
+
+*.mp3
+
+*.mp4

@@ -16,10 +16,10 @@ function hideLoader() {
     loader.classList.add("hidden");
 }
 
-
 // Function to make API call
 function makeAPICall(apiUrl, data) {
     // Your API call implementation here
+
     showLoader();
     fetch(apiUrl, {
         method: "POST",
@@ -32,28 +32,47 @@ function makeAPICall(apiUrl, data) {
             if (!response.ok) {
                 throw new Error("Network response was not ok");
             }
-            return response.json();
+            if (response.headers.get("content-type").startsWith("audio")) {
+                return { type: "audio", data: response.blob() };
+            } else if (
+                response.headers.get("content-type").startsWith("video")
+            ) {
+                return { type: "video", data: response.blob() };
+            } else {
+                return { type: "summary", data: response.json() };
+            }
         })
-        .then((data) => {
-            // Handle the API response data here
-            const { type, content } = data;
+        .then(({ type, data }) => {
             hideLoader();
-            const outputArea = document.getElementById("output-area");
-            switch (type) {
-                case "summary":
-                    outputArea.innerHTML = `<h3 class="text-xl font-bold mb-2">Summary:</h3><p>${content}</p>`;
-                    break;
-                case "video":
-                    outputArea.innerHTML = `<h3 class="text-xl font-bold mb-2">Video:</h3><video src="${content}" controls></video>`;
-                    break;
-                case "audio":
-                    outputArea.innerHTML = `<h3 class="text-xl font-bold mb-2">Audio:</h3><audio src="${content}" controls></audio>`;
-                    break;
-                case "quiz":
-                    outputArea.innerHTML = `<h3 class="text-xl font-bold mb-2">Quiz:</h3>${content}`;
-                    break;
-                default:
-                    outputArea.innerHTML = `<p>Unsupported response type: ${type}</p>`;
+            // Handle the API response data here
+            if (type == "audio" || type == "video") {
+                data.then((blob) => {
+                    const mediaContainer =
+                        document.getElementById("mediaContainer");
+                    mediaContainer.hidden = false;
+                    mediaContainer.innerHTML = "";
+                    const url = URL.createObjectURL(blob);
+                    const mediaElement = document.createElement(type);
+                    mediaElement.controls = true;
+                    mediaElement.src = url;
+                    mediaContainer.appendChild(mediaElement);
+                });
+            } else {
+                
+                const outputArea = document.getElementById("output-area");
+                data.then((data) => {
+
+                    switch (type) {
+                        case "summary":
+                            outputArea.innerHTML = `<h3 class="text-xl font-bold mb-2">Summary:</h3><p>${data.content}</p>`;
+                            break;
+                        case "quiz":
+                            outputArea.innerHTML = `<h3 class="text-xl font-bold mb-2">Quiz:</h3>${data.content}`;
+                            break;
+                        default:
+                            outputArea.innerHTML = `<p>Unsupported response type: ${type}</p>`;
+                    }
+                });
             }
         })
         .catch((error) => {

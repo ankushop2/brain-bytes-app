@@ -118,14 +118,14 @@ async def generate_video():
         result = await generate_text_to_image(prompt['phrase'])
         results.append(result)
     
-    # Printing the results
-    for result in results:
-        print(result)
     
     # Video Sitching + Generation
     generate_video_from_imgs(results, "audio.mp3")
-    # Upload to VIMEO
-    return { "type": "video", "content": "http://example.com"}
+    # Upload to UI
+    return send_file(
+         "output_video.mp4", 
+         mimetype="video/mp4", 
+         as_attachment=True)
 
 
 @app.route("/audio", methods=["POST"])
@@ -209,4 +209,4 @@ def quiz_generation():
 
 
 # comment before deploying
-# app.run(debug=True)
+app.run(debug=True)
