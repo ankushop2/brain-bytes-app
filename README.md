@@ -4,7 +4,7 @@ Brain Bytes is a platform designed to tap into the psychology of learning by pro
 
 ## Features
 
-- **Bite-Sized Learning**: Brain Bytes breaks down complex topics into easily digestible, byte-sized chunks, making learning more accessible and engaging.
+- **Byte-Sized Learning**: Brain Bytes breaks down complex topics into easily digestible, byte-sized chunks, making learning more accessible and engaging.
 - **Data Morphing**: Our platform allows content creators to transform and reshape data into visually appealing and interactive formats, enhancing the learning experience.
 - **Byte-Sized Data Generation**: Content creators can generate bite-sized data snippets, making it easier to create and distribute concise and focused learning materials.
 - **Content Creation for Consumers**: Brain Bytes empowers consumers to create and share their own learning content, fostering a collaborative and democratized learning environment.
@@ -13,7 +13,7 @@ Brain Bytes is a platform designed to tap into the psychology of learning by pro
 
 Brain Bytes is built using Flask, a lightweight Python web framework, and utilizes Tailwind CSS for styling. The project follows a modular architecture, allowing for easy scalability and maintainability.
 
-[Architecture Diagram Link](https://imgur.com/a/TXiwEHT)
+![Architecture Diagram Link](https://imgur.com/a/TXiwEHT)
 
 ## Getting Started
 
