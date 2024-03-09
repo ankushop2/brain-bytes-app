@@ -13,7 +13,7 @@ Brain Bytes is a platform designed to tap into the psychology of learning by pro
 
 Brain Bytes is built using Flask, a lightweight Python web framework, and utilizes Tailwind CSS for styling. The project follows a modular architecture, allowing for easy scalability and maintainability.
 
-![Architecture Diagram Link](https://imgur.com/a/TXiwEHT)
+![Architecture Diagram Link](https://imgur.com/gallery/TXiwEHT)
 
 ## Getting Started
 
