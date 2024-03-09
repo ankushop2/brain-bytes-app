@@ -1,5 +1,6 @@
 from flask import Flask
 from flask import request
+from flask import render_template, jsonify, send_from_directory
 from claude_api import  generate_summary_from_blog, generate_image_prompts, generate_script
 from claude_api import extract_transcript
 from utils import determine_url_type_and_extract_id
@@ -12,7 +13,17 @@ import asyncio
 
 stability_url = "https://api.stability.ai/v1/generation/stable-diffusion-v1-6/text-to-image"
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="templates")
+
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                          'favicon.ico',mimetype='image/vnd.microsoft.icon')
+
+@app.route("/")
+def hello_world():
+    return render_template('index.html')
 
 def convert_to_array(text):
     # Splitting the text into lines
@@ -163,4 +174,4 @@ def quiz_generation():
 
 
 # comment before deploying
-app.run()
+# app.run()
