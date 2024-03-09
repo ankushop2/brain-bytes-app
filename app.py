@@ -100,11 +100,12 @@ async def generate_video():
     
     #Generate audio 
         
-    tts = gTTS(text=summary, lang='en')
-    tts.save("audio.mp3")
+    
     # Generate Script
     script = await generate_script(summary, anthropic_client)
     
+    tts = gTTS(text=script, lang='en')
+    tts.save("audio.mp3")
 
     # Generate Image Prompts
     image_prompts = await generate_image_prompts(script, anthropic_client)
