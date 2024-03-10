@@ -1,6 +1,10 @@
+@font-face {
+  font-family: 'MyWebFont';
+  src: url('GDSTransportWebsite.woff') format('woff');
+}
+
 body {
-    font-family: myFont;
-    src: url(ChrustyRock-ORLA.ttf);
+    font-family: MyWebFont;
 }
 @keyframes spin {
     to {
