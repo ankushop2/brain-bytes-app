@@ -265,7 +265,7 @@ async def quiz_generation():
     # mcq_string = mcq_string[start:end]
     # questions = json.loads(mcq_string)
     print(mcq_string)
-    return jsonify({"type":"quiz-generation","content":'{'+mcq_string+'}'})
+    return {"type":"quiz-generation","content":mcq_string}
     # return {"type":"quiz-generation", "content":mcq_string}
 
 @app.route('/flash-cards', methods=["POST"])

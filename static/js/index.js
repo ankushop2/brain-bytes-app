@@ -60,8 +60,18 @@ function makeAPICall(apiUrl, data) {
                 });
             } else {
                 const outputArea = document.getElementById("output-area");
-                data.then((data) => {
-                    
+                data.then((response) => {
+                    const type = response.type;
+                    let content;
+
+                    try {
+                        // Remove the outer double quotes and unescape the JSON string
+                        content = JSON.parse(response.content);
+                    } catch (error) {
+                        outputArea.innerHTML = `<p>Invalid JSON format in the API response.</p>`;
+                        return;
+                    }
+
                     switch (type) {
                         case "quiz-generation":
                             const quizContainer = document.createElement("div");
@@ -71,8 +81,10 @@ function makeAPICall(apiUrl, data) {
                                 "gap-4"
                             );
 
-                            data.content.forEach(
-                                (questionData, index) => {
+                            const quizData = Object.entries(content);
+
+                            quizData.forEach(([key, value], index) => {
+                                if (key.startsWith("Question")) {
                                     const questionCard =
                                         document.createElement("div");
                                     questionCard.classList.add(
@@ -89,30 +101,88 @@ function makeAPICall(apiUrl, data) {
                                         "font-bold",
                                         "mb-2"
                                     );
-                                    questionNumber.textContent =
-                                        questionData.question;
+                                    questionNumber.textContent = value;
 
                                     const optionsList =
-                                        document.createElement("ul");
+                                        document.createElement("div");
                                     optionsList.classList.add(
-                                        "list-disc",
-                                        "ml-6"
+                                        "flex",
+                                        "flex-col",
+                                        "gap-2"
                                     );
-
+                                    
+                                    const answerKey = content[`Answer`];
+                                    let optionIndex = index * 5 + 1;
                                     for (let i = 1; i <= 4; i++) {
-                                        const optionKey = 'option' + i;
-                                        if (questionData.hasOwnProperty(optionKey)) {
-                                            const optionItem = document.createElement('li');
-                                            optionItem.textContent = questionData[optionKey];
+                                        const optionKey = `Option ${i}`;
+                                        const optionValue = content[optionKey];
+
+                                        if (optionValue) {
+                                            const optionItem =
+                                                document.createElement("div");
+                                            optionItem.classList.add(
+                                                "flex",
+                                                "items-center"
+                                            );
+
+                                            const optionRadio =
+                                                document.createElement("input");
+                                            optionRadio.type = "radio";
+                                            optionRadio.name = `question-${index}`;
+                                            optionRadio.value = optionValue;
+
+                                            const optionLabel =
+                                                document.createElement("label");
+                                            optionLabel.classList.add("ml-2");
+                                            optionLabel.textContent =
+                                                optionValue;
+
+                                            optionItem.appendChild(optionRadio);
+                                            optionItem.appendChild(optionLabel);
                                             optionsList.appendChild(optionItem);
                                         }
-                                    }
 
+                                        optionIndex++;
+                                    }
+                                    
+                                    const answerFeedback =
+                                        document.createElement("p");
+                                    answerFeedback.classList.add(
+                                        "text-green-500",
+                                        "font-bold",
+                                        "mt-2"
+                                    );
+                                    answerFeedback.textContent = `Correct Answer: ${answerKey}`;
+                                    answerFeedback.style.display = "none";
+                                    optionsList.addEventListener(
+                                        "change",
+                                        () => {
+                                            const selectedOption = Array.from(
+                                                optionsList.querySelectorAll(
+                                                    "input"
+                                                )
+                                            ).find((input) => input.checked);
+                                            if (
+                                                selectedOption &&
+                                                selectedOption.value ===
+                                                    content[answerKey]
+                                            ) {
+                                                answerFeedback.style.display =
+                                                    "block";
+                                            } else {
+                                                answerFeedback.style.display =
+                                                    "none";
+                                            }
+                                        }
+                                    );
+                                    
                                     questionCard.appendChild(questionNumber);
                                     questionCard.appendChild(optionsList);
+                                    questionCard.appendChild(answerFeedback);
                                     quizContainer.appendChild(questionCard);
+                                    
                                 }
-                            );
+                            });
 
                             outputArea.appendChild(quizContainer);
                             break;
