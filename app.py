@@ -224,7 +224,8 @@ async def generate_summary():
         data = response_it.json()
         summary_it = data['response']['translated_text']
 
-    return jsonify({"type":"summary","content":{"summary_en":summary,"summary_fr":summary_fr,"summary_it":summary_it}})
+    #return jsonify({"type":"summary","content":{"summary_en":summary,"summary_fr":summary_fr,"summary_it":summary_it}})
+    return render_template('result-summary.html', summary_data = summary)
 
 
 
