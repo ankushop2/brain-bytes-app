@@ -21,9 +21,8 @@ To get started with Brain Bytes, follow these steps:
 
 1. Clone the repository: `git clone https://github.com/ankushop2/brain-bytes-app.git`
 2. Install the required dependencies: `pip install -r requirements.txt`
-3. Set up the database (if applicable)
-4. Configure the application settings
-5. Run the development server: `python app.py`
+3. Set up the `ANTHROPIC_API_KEY` and `STABILITY_API_KEY` in `.env`
+4. Run the development server: `python app.py`
 
 ## Contact
 
