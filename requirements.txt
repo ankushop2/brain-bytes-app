@@ -6,3 +6,5 @@ youtube_transcript_api
 flask[async]
 gtts
 moviepy
+ffmpeg-python
+faster-whisper
