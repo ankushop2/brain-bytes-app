@@ -64,16 +64,15 @@ function makeAPICall(apiUrl, data) {
                     const type = response.type;
                     let content;
 
-                    try {
-                        // Remove the outer double quotes and unescape the JSON string
-                        content = JSON.parse(response.content);
-                    } catch (error) {
-                        outputArea.innerHTML = `<p>Invalid JSON format in the API response.</p>`;
-                        return;
-                    }
-
                     switch (type) {
                         case "quiz-generation":
+                            try {
+                                // Remove the outer double quotes and unescape the JSON string
+                                content = JSON.parse(response.content);
+                            } catch (error) {
+                                outputArea.innerHTML = `<p>Invalid JSON format in the API response.</p>`;
+                                return;
+                            }
                             const quizContainer = document.createElement("div");
                             quizContainer.classList.add(
                                 "flex",
@@ -110,7 +109,7 @@ function makeAPICall(apiUrl, data) {
                                         "flex-col",
                                         "gap-2"
                                     );
-                                    
+
                                     const answerKey = content[`Answer`];
                                     let optionIndex = index * 5 + 1;
                                     for (let i = 1; i <= 4; i++) {
@@ -144,7 +143,7 @@ function makeAPICall(apiUrl, data) {
 
                                         optionIndex++;
                                     }
-                                    
+
                                     const answerFeedback =
                                         document.createElement("p");
                                     answerFeedback.classList.add(
@@ -175,16 +174,45 @@ function makeAPICall(apiUrl, data) {
                                             }
                                         }
                                     );
-                                    
+
                                     questionCard.appendChild(questionNumber);
                                     questionCard.appendChild(optionsList);
                                     questionCard.appendChild(answerFeedback);
                                     quizContainer.appendChild(questionCard);
-                                    
                                 }
                             });
 
                             outputArea.appendChild(quizContainer);
+                            break;
+                        case "summary":
+                            // Create tab container
+                            var tabContainer = document.createElement("div");
+                            tabContainer.className = "mt-4";
+
+                            enHeader = document.createElement("h2");
+                            enHeader.innerHTML = "summary_en";
+                            enContent = document.createElement("p");
+                            enContent.innerHTML = response.content.summary_en;
+
+                            frHeader = document.createElement("h2");
+                            frHeader.innerHTML = "summary_fr";
+                            frContent = document.createElement("p");
+                            frContent.innerHTML = response.content.summary_fr;
+
+                            itHeader = document.createElement("h2");
+                            itHeader.innerHTML = "summary_it";
+                            itContent = document.createElement("p");
+                            itContent.innerHTML = response.content.summary_it;
+
+                            tabContainer.appendChild(enHeader);
+                            tabContainer.appendChild(enContent);
+                            tabContainer.appendChild(frHeader);
+                            tabContainer.appendChild(frContent);
+                            tabContainer.appendChild(itHeader);
+                            tabContainer.appendChild(itContent);
+                            
+
+                            outputArea.appendChild(tabContainer);
                             break;
                         default:
                             outputArea.innerHTML = `<p>Unsupported response type: ${type}</p>`;
@@ -213,7 +241,7 @@ function handleButtonClick(buttonId, endpoint) {
 }
 
 // Attaching event listeners to buttons
-// handleButtonClick("summary-btn", "/summary");
+handleButtonClick("summary-btn", "/summary");
 handleButtonClick("video-btn", "/video");
-//handleButtonClick("audio-btn", "/audio");
+handleButtonClick("audio-btn", "/audio");
 handleButtonClick("quiz-btn", "/quiz-generation");
