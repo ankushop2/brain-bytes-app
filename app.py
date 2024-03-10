@@ -308,4 +308,4 @@ async def flash_cards():
     return {"type":"flash-cards","content":mcq_string}
 
 # comment before deploying
-app.run(debug=True, port=5001)
+#app.run(debug=True, port=5001)
