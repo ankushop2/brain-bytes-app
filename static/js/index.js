@@ -210,9 +210,70 @@ function makeAPICall(apiUrl, data) {
                             tabContainer.appendChild(frContent);
                             tabContainer.appendChild(itHeader);
                             tabContainer.appendChild(itContent);
-                            
 
                             outputArea.appendChild(tabContainer);
+                            break;
+                        case "flash-cards":
+                            const cleanedContentText = response.content.replace(
+                                /\\n/g,
+                                ""
+                            );
+
+                            // Parse the cleaned text into JSON data
+                            const jsonData = JSON.parse(cleanedContentText);
+
+                            // Create the flip card container
+                            const flipCard = document.createElement("div");
+                            flipCard.className = "flip-card";
+
+                            // Create the flip card inner container
+                            const flipCardInner = document.createElement("div");
+                            flipCardInner.className =
+                                "flip-card-inner bg-gray-200 rounded-lg p-8 flex flex-col items-center justify-center";
+
+                            // Create the flip card front
+                            const flipCardFront = document.createElement("div");
+                            flipCardFront.className = "flip-card-front";
+
+                            const flipCardFrontH3 =
+                                document.createElement("h3");
+                            flipCardFrontH3.className =
+                                "text-2xl font-bold mb-4";
+                            flipCardFrontH3.textContent = "Flashcard";
+
+                            const flipCardFrontP = document.createElement("p");
+                            flipCardFrontP.className = "text-lg";
+                            flipCardFrontP.textContent =
+                                jsonData.Question1;
+
+                            // Create the flip card back
+                            const flipCardBack = document.createElement("div");
+                            flipCardBack.className =
+                                "flip-card-back bg-gray-300 rounded-lg p-8 flex flex-col items-center justify-center";
+
+                            const flipCardBackH3 = document.createElement("h3");
+                            flipCardBackH3.className =
+                                "text-2xl font-bold mb-4";
+                            flipCardBackH3.textContent = "Flashcard 1";
+
+                            const flipCardBackP = document.createElement("p");
+                            flipCardBackP.className = "text-lg";
+                            flipCardBackP.textContent =
+                                jsonData.Answer1;
+
+                            // Append the front and back to the inner container
+                            flipCardFront.appendChild(flipCardFrontH3);
+                            flipCardFront.appendChild(flipCardFrontP);
+                            flipCardInner.appendChild(flipCardFront);
+
+                            flipCardBack.appendChild(flipCardBackH3);
+                            flipCardBack.appendChild(flipCardBackP);
+                            flipCardInner.appendChild(flipCardBack);
+
+                            // Append the inner container to the flip card container
+                            flipCard.appendChild(flipCardInner);
+
+                            outputArea.appendChild(flipCard);
                             break;
                         default:
                             outputArea.innerHTML = `<p>Unsupported response type: ${type}</p>`;
@@ -245,3 +306,4 @@ handleButtonClick("summary-btn", "/summary");
 handleButtonClick("video-btn", "/video");
 handleButtonClick("audio-btn", "/audio");
 handleButtonClick("quiz-btn", "/quiz-generation");
+handleButtonClick("flashcard-btn", "/flash-cards");

@@ -305,7 +305,7 @@ async def flash_cards():
     # mcq_string = mcq_string[start:end]
     # questions = json.loads(mcq_string)
     print(mcq_string)
-    return jsonify({"type":"flash-cards","content":'{'+mcq_string+'}'})
+    return {"type":"flash-cards","content":mcq_string}
 
 # comment before deploying
 app.run(debug=True, port=5001)
