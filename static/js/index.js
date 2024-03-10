@@ -190,17 +190,20 @@ function makeAPICall(apiUrl, data) {
                             tabContainer.className = "mt-4";
 
                             enHeader = document.createElement("h2");
-                            enHeader.innerHTML = "summary_en";
+                            enHeader.className = "text-xl font-bold mb-4"
+                            enHeader.innerHTML = "English: ";
                             enContent = document.createElement("p");
                             enContent.innerHTML = response.content.summary_en;
 
                             frHeader = document.createElement("h2");
-                            frHeader.innerHTML = "summary_fr";
+                            frHeader.className = "text-xl font-bold mb-4"
+                            frHeader.innerHTML = "French: ";
                             frContent = document.createElement("p");
                             frContent.innerHTML = response.content.summary_fr;
 
                             itHeader = document.createElement("h2");
-                            itHeader.innerHTML = "summary_it";
+                            itHeader.className = "text-xl font-bold mb-4"
+                            itHeader.innerHTML = "Italian: ";
                             itContent = document.createElement("p");
                             itContent.innerHTML = response.content.summary_it;
 
